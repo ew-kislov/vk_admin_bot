@@ -161,8 +161,8 @@ updates.hear(/^\/kick/, context => {
         })
 })
 
-// messages which start with '/make'
-updates.hear(/^\/make/, context => {
+// messages which start with '/grant'
+updates.hear(/^\/grant/, context => {
     if (context.peerType == 'user') {
         context.send('Данная команда недоступна в чате с ботом.')
         //TODO: log kick declined action to db
@@ -176,7 +176,7 @@ updates.hear(/^\/make/, context => {
 
     if (wordArray.length != 3) {
         context.send('Ошибка в команде. Укажите id участника и роль.')
-        //TODO: log make declined action to db
+        //TODO: log grant declined action to db
         return
     }
 
