@@ -7,11 +7,16 @@ const vkInstance = new VK({
 })
 const { updates, api } = vkInstance
 
-// mocked table
+// mocked db
 // TODO: replace to original DB
 const conversation_table = [
     { id: 1, peer_id: '2000000002', name: 'Тестирование_бота' },
     { id: 2, peer_id: '2000000005', name: 'Тестирование_бота_2' }
+]
+const role_table = [
+    { id: 1, name: 'administrator' },
+    { id: 2, name: 'moderator-extended' },
+    { id: 3, name: 'moderator' }
 ]
 
 updates.start()
@@ -19,6 +24,7 @@ updates.start()
 // messages which start with '/broadcast'
 updates.hear(/^\/broadcast/, context => {
     if (context.peerType == 'chat') {
+        context.send('Данная команда недоступна в беседе.')
         //TODO: log broadcast denied action to db
         return
     }
@@ -60,6 +66,7 @@ updates.hear(/^\/broadcast/, context => {
 // messages which start with '/broadcast'
 updates.hear(/^\/send/, context => {
     if (context.peerType == 'chat') {
+        context.send('Данная команда недоступна в беседе.')
         //TODO: log broadcast denied action to db
         return
     }
@@ -93,6 +100,7 @@ updates.hear(/^\/send/, context => {
 // messages which start with '/init'
 updates.hear(/^\/init/, context => {
     if (context.peerType == 'user') {
+        context.send('Данная команда недоступна в чате с ботом.')
         //TODO: log init declined action to db
         return
     }
@@ -117,4 +125,66 @@ updates.hear(/^\/init/, context => {
             // TODO: log declined action
             context.send('Во время инициализации произошла ошибка. Возможно бот не был назначен администратором.')
         })
+})
+
+// messages which start with '/kick'
+updates.hear(/^\/kick/, context => {
+    if (context.peerType == 'user') {
+        context.send('Данная команда недоступна в чате с ботом.')
+        //TODO: log init declined action to db
+        return
+    }
+
+    //TODO: check for roles and log declined action if doesn't have permission
+
+    let messageContent = context.text
+    let wordArray = messageContent.split(' ')
+
+    if (wordArray.length < 3) {
+        context.send('Укажите id участника и причину.')
+        //TODO: log init declined action to db
+        return
+    }
+
+    // user id is in 2nd word - format [idxxxxxxxxxx|@idxxxxxxxxxx]
+    let userId = wordArray[1].split('|')[0].replace('[id', '')
+    // reason text is string of all words with index = 3
+    let reason = wordArray.splice(2).reduce((prev, curr) => prev + ' ' + curr)
+
+    api.messages.removeChatUser({ user_id: userId, chat_id: context.chatId })
+        .then(response => {
+            // log kick action to db
+        })
+        .catch(error => {
+            // log declined action to db
+            context.send('Ошибка. Возможно Вы неверно указали id участника.')
+        })
+})
+
+// messages which start with '/make'
+updates.hear(/^\/make/, context => {
+    if (context.peerType == 'user') {
+        context.send('Данная команда недоступна в чате с ботом.')
+        //TODO: log kick declined action to db
+        return
+    }
+
+    //TODO: check for roles and log declined action if doesn't have permission
+
+    let messageContent = context.text
+    let wordArray = messageContent.split(' ')
+
+    if (wordArray.length != 3) {
+        context.send('Ошибка в команде. Укажите id участника и роль.')
+        //TODO: log make declined action to db
+        return
+    }
+
+    // user id is in 2nd word - format [idxxxxxxxxxx|@idxxxxxxxxxx]
+    let userId = wordArray[1].split('|')[0].replace('[id', '')
+    // role is 3rd word
+    let role = wordArray[2]
+
+    // TODO: add new granted user
+    // TODO: log grant action
 })
