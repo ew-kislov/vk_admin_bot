@@ -2,25 +2,18 @@
   "name": "bot-v1",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ew-kislov/bot-v1.git"
+    "start": "nodemon src/index.js"
   },
   "author": "Evgeniy kislov",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ew-kislov/bot-v1/issues"
-  },
-  "homepage": "https://github.com/ew-kislov/bot-v1#readme",
   "dependencies": {
     "@vk-io/session": "0.0.0-alpha.1",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mysql": "^2.17.1",
     "node-vk-bot": "^1.2.3",
     "node-vk-bot-api": "^2.4.11",
     "node-vk-sdk": "^1.1.2",
