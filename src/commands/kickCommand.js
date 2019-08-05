@@ -1,7 +1,7 @@
-const { actionRepository } = require('../repository')
+const { actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
 
-function handleKickCommand(context) {
+async function handleKickCommand(context) {
     if (context.peerType == 'user') {
         context.send('Данная команда недоступна в чате с ботом.')
 
@@ -15,8 +15,6 @@ function handleKickCommand(context) {
         return
     }
 
-    //TODO: check for roles and log declined action if doesn't have permission
-
     let messageContent = context.text
     let wordArray = messageContent.split(' ')
 
@@ -27,6 +25,20 @@ function handleKickCommand(context) {
             type_id: ACTION_TYPES.USER_KICK_DENIED,
             vk_user_id: context.senderId,
             details: 'Неверное количество параметров в команде'
+        }
+        actionRepository.addAction(action)
+
+        return
+    }
+
+    let hasPermission = await userRoleRepository.checkIfUserHasPermissionOnConversation(context.senderId, context.peerId)
+    if (!hasPermission) {
+        context.send('У вас нет прав на данную команду.')
+
+        let action = {
+            type_id: ACTION_TYPES.USER_KICK_DENIED,
+            vk_user_id: context.senderId,
+            details: 'Нет прав на команду'
         }
         actionRepository.addAction(action)
 
@@ -58,4 +70,4 @@ function handleKickCommand(context) {
         })
 }
 
-module.exports =  handleKickCommand
+module.exports = handleKickCommand

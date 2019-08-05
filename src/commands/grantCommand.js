@@ -1,7 +1,7 @@
-const { actionRepository } = require('../repository')
+const { actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
 
-function handleGrantCommand(context) {
+async function handleGrantCommand(context) {
     if (context.peerType == 'user') {
         context.send('Данная команда недоступна в чате с ботом.')
 
@@ -14,8 +14,6 @@ function handleGrantCommand(context) {
 
         return
     }
-
-    //TODO: check for roles and log declined action if doesn't have permission
 
     let messageContent = context.text
     let wordArray = messageContent.split(' ')
@@ -33,14 +31,62 @@ function handleGrantCommand(context) {
         return
     }
 
+    let hasPermission = await userRoleRepository.checkIfUserHasPermissionOnConversation(context.senderId, context.peerId)
+    if (!hasPermission) {
+        context.send('У вас нет прав на данную команду.')
+
+        let action = {
+            type_id: ACTION_TYPES.USER_GRANT_DENIED,
+            vk_user_id: context.senderId,
+            details: 'Нет прав на команду'
+        }
+        actionRepository.addAction(action)
+
+        return
+    }
+
     // user id is in 2nd word - format [idxxxxxxxxxx|@idxxxxxxxxxx]
     let userId = wordArray[1].split('|')[0].replace('[id', '')
     // role is 3rd word
-    let role = wordArray[2]
+    let enteredRole = wordArray[2]
 
-    // TODO: check if role exists
-    // TODO: add new granted user
-    // TODO: log grant denied if error
+    let roles = await userRoleRepository.getUserRoles()
+    let role = roles.find(role => role.name == enteredRole)
+
+
+    if (role == undefined) {
+        context.send('Вы указали несуществующую роль.')
+
+        let action = {
+            type_id: ACTION_TYPES.USER_GRANT_DENIED,
+            vk_user_id: context.senderId,
+            details: 'Такой роли не существует'
+        }
+        actionRepository.addAction(action)
+
+        return
+    }
+
+    userRoleRepository.addUserPermission(userId, role, context.peerId)
+        .then(() => {
+            let action = {
+                type_id: ACTION_TYPES.USER_GRANTED,
+                vk_user_id: context.senderId
+            }
+            actionRepository.addAction(action)
+
+            context.send('Пользователь успешно назначен.')
+        })
+        .catch(() => {
+            let action = {
+                type_id: ACTION_TYPES.USER_GRANT_DENIED,
+                vk_user_id: context.senderId,
+                details: 'Внутренняя ошибка сервера/Данная роль уже назначена пользователю'
+            }
+            actionRepository.addAction(action)
+
+            context.send('Внутренняя ошибка сервера. Возможно данный пользователь уже был назначен на эту роль.')
+        })
 
     let action = {
         type_id: ACTION_TYPES.USER_GRANTED,

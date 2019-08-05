@@ -44,6 +44,10 @@ insert into user_role(name) values
     ('administrator'),
     ('moderator');
 
+-- Define administrator
+
+insert into user_role_conversation_join(vk_user_id, user_role_id) values('xxxxxxxx', 1);
+
 -- Define action types
 
 insert into action_type(name) values

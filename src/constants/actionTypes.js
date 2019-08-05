@@ -11,6 +11,4 @@ const ACTION_TYPES = {
     USER_GRANT_DENIED: 10
 }
 
-module.exports = {
-    ACTION_TYPES
-}
+module.exports = ACTION_TYPES

@@ -5,7 +5,9 @@ const CONVERSATION_TABLE = 'conversation'
 
 function addConversation(conversation) {
     let date = moment().format('YYYY-MM-DD hh:mm:ss')
-    let query = `INSERT into ${CONVERSATION_TABLE}(peer_id, name, init_time) VALUES ('${conversation.peer_id}', '${conversation.name}', '${date}')`
+    let query =
+        `INSERT INTO ${CONVERSATION_TABLE}(peer_id, name, init_time)
+        VALUES ('${conversation.peer_id}', '${conversation.name}', '${date}')`
     return executeQuery(query)
 }
 

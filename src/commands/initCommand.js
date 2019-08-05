@@ -1,7 +1,7 @@
-const { conversationRepository, actionRepository } = require('../repository')
+const { conversationRepository, actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
 
-function handleInitCommand(context) {
+async function handleInitCommand(context) {
     if (context.peerType == 'user') {
         context.send('Данная команда недоступна в чате с ботом.')
 
@@ -15,7 +15,19 @@ function handleInitCommand(context) {
         return
     }
 
-    //TODO: check for roles and log declined action if doesn't have permission
+    isAdministrator = await userRoleRepository.checkIfUserAdministrator(context.senderId)
+    if (!isAdministrator) {
+        context.send('У вас нет прав на данную команду.')
+
+        let action = {
+            type_id: ACTION_TYPES.CONVERSATION_INITIALIZATION_DENIED,
+            vk_user_id: context.senderId,
+            details: 'Нет прав на команду'
+        }
+        actionRepository.addAction(action)
+
+        return
+    }
 
     vk_api.messages.getConversationsById({ peer_ids: context.peerId })
         .then(response => {

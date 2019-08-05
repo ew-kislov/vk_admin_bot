@@ -1,7 +1,7 @@
-const { conversationRepository, actionRepository } = require('../repository')
+const { conversationRepository, actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
 
-function handleBroadcastCommand(context) {
+async function handleBroadcastCommand(context) {
     if (context.peerType == 'chat') {
         context.send('Данная команда недоступна в беседе.')
 
@@ -15,7 +15,19 @@ function handleBroadcastCommand(context) {
         return
     }
 
-    //TODO: check for roles and log declined action if doesn't have permission
+    isAdministrator = await userRoleRepository.checkIfUserAdministrator(context.senderId)
+    if (!isAdministrator) {
+        context.send('У вас нет прав на данную команду.')
+
+        let action = {
+            type_id: ACTION_TYPES.BROADCAST_MESSAGE_SENDING_DENIED,
+            vk_user_id: context.senderId,
+            details: 'Нет прав на команду'
+        }
+        actionRepository.addAction(action)
+
+        return
+    }
 
     // content of received message
     let messageContent = context.text
