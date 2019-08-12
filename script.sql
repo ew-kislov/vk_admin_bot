@@ -46,7 +46,7 @@ insert into user_role(name) values
 
 -- Define administrator
 
-insert into user_role_conversation_join(vk_user_id, user_role_id) values('xxxxxxxx', 1);
+insert into user_role_conversation_join(vk_user_id, user_role_id) values('137733276', 1);
 
 -- Define action types
 
