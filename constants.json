@@ -1,0 +1,12 @@
+{
+    "ENV": "DEV",
+
+    "VK_TOKEN": "d94c7e57109bdec79846b3cd549fa42b1a767d13d524753cc5a9e6d1d70441e67d1766f3d716574ae68d5",
+    "VK_API_VERSION": "5.101",
+    "VK_GROUP_ID": "185030663",
+
+    "MYSQL_HOST": "localhost",
+    "MYSQL_USER": "root",
+    "MYSQL_PASSWORD": "root",
+    "MYSQL_DB_NAME": "admin_bot"
+}
