@@ -6,19 +6,19 @@ create table conversation (
     name varchar(50) not null,
     init_time datetime not null,
     primary key(id)
-);
+) DEFAULT CHARSET cp1251;
 
 create table user_role (
     id int(2) not null auto_increment,
     name varchar(50) not null,
     primary key (id)
-);
+) DEFAULT CHARSET cp1251;
 
 create table action_type (
     id int(3) not null auto_increment,
     name varchar(50) not null,
     primary key (id)
-);
+) DEFAULT CHARSET cp1251;
 
 create table action (
     id int(10) not null auto_increment,
@@ -28,7 +28,7 @@ create table action (
     details text,
     primary key (id),
     foreign key (type_id) references action_type (id)
-);
+) DEFAULT CHARSET cp1251;
 
 create table user_role_conversation_join (
     vk_user_id varchar(20) not null,
@@ -36,7 +36,7 @@ create table user_role_conversation_join (
     conversation_id int(10),
     foreign key (user_role_id) references user_role (id),
     foreign key (conversation_id) references conversation (id)
-);
+) DEFAULT CHARSET cp1251;
 
 -- Define user roles
 

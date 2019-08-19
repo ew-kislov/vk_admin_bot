@@ -1,5 +1,6 @@
 const { conversationRepository, actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
+const { delay } = require('../util')
 
 async function handleSendCommand(context) {
     if (context.peerType == 'chat') {
@@ -45,12 +46,13 @@ async function handleSendCommand(context) {
     }
 
     // text of message to send
-    let messageText = messageContent.substr(messageContent.indexOf(' ') + 1)
+    let messageText = messageContent.substr(5)
 
     conversationRepository.getConversations()
-        .then(conversations => {
-            conversations.forEach(conversation => {
-                vk_api.messages.send({ peer_id: conversation.peer_id, message: messageText })
+        .then(async conversations => {
+            for (let i = 0; i < conversations.length; i++) {
+                let conversation = conversations[i]
+                vk_api.messages.send({ peer_id: conversation.peer_id, message: messageText, forward_messages: context.forwards })
                     .then(() => {
                         let action = {
                             type_id: ACTION_TYPES.MESSAGE_SENT,
@@ -58,7 +60,10 @@ async function handleSendCommand(context) {
                         }
                         actionRepository.addAction(action)
                     })
-            })
+
+                // for vk
+                await delay(3000)
+            }
         })
         .catch(() => {
             let action = {

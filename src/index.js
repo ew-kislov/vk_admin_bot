@@ -36,6 +36,7 @@ const vkInstance = new VK({
 const { updates, api } = vkInstance
 
 global.vk_api = api
+global.vk = vkInstance
 
 // Setting bot commands and callbacks
 

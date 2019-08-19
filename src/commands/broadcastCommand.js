@@ -45,7 +45,7 @@ async function handleBroadcastCommand(context) {
     }
 
     // text of broadcast message to send
-    let broadcastText = messageContent.substr(messageContent.indexOf(' ') + 1)
+    let broadcastText = messageContent.substr(10)
 
     conversationRepository.getConversations()
         .then(conversations => {
@@ -53,7 +53,7 @@ async function handleBroadcastCommand(context) {
                 vk_api.messages.getConversationMembers({ peer_id: conversation.peer_id })
                     .then(members => {
                         let idString = ''
-                        members.profiles.forEach(profile => idString += ('@id' + profile.id + ' '))
+                        members.profiles.forEach(profile => idString += ('@id' + profile.id + '(' + profile.first_name + ') '))
 
                         let messageString = broadcastText + '\n' + idString
                         return messageString

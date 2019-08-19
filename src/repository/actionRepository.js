@@ -16,7 +16,6 @@ function addAction(action) {
             `INSERT INTO ${ACTION_TABLE}(type_id, creation_date, vk_user_id)
             VALUES ('${action.type_id}', '${date}', '${action.vk_user_id}')`
 
-    console.log(query)
     return executeQuery(query)
 }
 
