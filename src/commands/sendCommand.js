@@ -52,6 +52,7 @@ async function handleSendCommand(context) {
         .then(async conversations => {
             for (let i = 0; i < conversations.length; i++) {
                 let conversation = conversations[i]
+                
                 vk_api.messages.send({ peer_id: conversation.peer_id, message: messageText, forward_messages: context.forwards })
                     .then(() => {
                         let action = {

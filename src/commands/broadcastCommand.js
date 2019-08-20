@@ -1,5 +1,6 @@
 const { conversationRepository, actionRepository, userRoleRepository } = require('../repository')
 const { ACTION_TYPES } = require('../constants')
+const { delay } = require('../util')
 
 async function handleBroadcastCommand(context) {
     if (context.peerType == 'chat') {
@@ -48,12 +49,14 @@ async function handleBroadcastCommand(context) {
     let broadcastText = messageContent.substr(10)
 
     conversationRepository.getConversations()
-        .then(conversations => {
-            conversations.forEach(conversation => {
+        .then(async conversations => {
+            for (let i = 0; i < conversations.length; i++) {
+                let conversation = conversations[i]
+
                 vk_api.messages.getConversationMembers({ peer_id: conversation.peer_id })
                     .then(members => {
                         let idString = ''
-                        members.profiles.forEach(profile => idString += ('@id' + profile.id + '(' + profile.first_name + ') '))
+                        members.profiles.forEach(profile => idString += ('@id' + profile.id + '(&#4448;) '))
 
                         let messageString = broadcastText + '\n' + idString
                         return messageString
@@ -67,7 +70,9 @@ async function handleBroadcastCommand(context) {
                         actionRepository.addAction(action)
                     })
 
-            })
+                // for vk
+                await delay(3000)
+            }
         })
         .catch(() => {
             let action = {

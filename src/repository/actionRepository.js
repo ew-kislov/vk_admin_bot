@@ -1,10 +1,16 @@
-const { executeQuery } = require('../util')
 const moment = require('moment')
+const fs = require('fs')
+
+const { ACTION_TYPE_STRINGS } = require('../constants')
+const { executeQuery } = require('../util')
 
 const ACTION_TABLE = 'action'
+const FILE_NAME = 'actions.log'
 
 function addAction(action) {
     let date = moment().format('YYYY-MM-DD hh:mm:ss')
+
+    fs.appendFile(FILE_NAME, `${date} | ${action.vk_user_id} | ${ACTION_TYPE_STRINGS[action.type_id]} | ${action.details || 'Нет деталей'} |\n`, err => {})
 
     let query
     if (action.details)
