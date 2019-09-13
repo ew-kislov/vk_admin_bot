@@ -1,6 +1,10 @@
 # VK Admin Bot
 
-VK бот для администрирования бесед
+VK бот для администрирования бесед <br/>
+
+Язык: JavaScript <br/>
+
+Использовалось: node.js, MySQL, VK API <br/>
 
 # Versions
 
